@@ -1,0 +1,5 @@
+---
+  - hosts: all
+    tasks:
+      - name: ensure NGINX is at the latest version
+        apt: name=nginx state=latest
