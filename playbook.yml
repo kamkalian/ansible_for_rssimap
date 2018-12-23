@@ -1,5 +1,40 @@
 ---
   - hosts: all
+
+    gather_facts: no
+
     tasks:
-      - name: ensure NGINX is at the latest version
-        apt: name=nginx state=latest
+
+      - name: Install some packages
+        apt:
+          name: "{{ packages }}"
+          state: latest
+        vars:
+          packages:
+          - nginx
+          - python3
+          - python-pip
+          - virtualenv
+
+      - name: Get repo from github
+        git:
+          repo: https://github.com/kamkalian/rssimap.git
+          dest: /var/www/rssimap
+
+      - name: Create venv and install requirements
+        pip:
+          requirements=/var/www/rssimap/requirements.txt
+          virtualenv=/var/www/rssimap/venv
+          virtualenv_python=python3
+
+      - name: create symlink nginx config
+        file:
+          src: /var/www/rssimap/nginx_default.cfg
+          dest: /etc/nginx/sites-enabled/default
+          state: link
+        become: yes
+
+      - name: restart nginx
+        service:
+          name: nginx
+          state: restarted
