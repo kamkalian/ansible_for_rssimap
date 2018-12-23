@@ -1,2 +1,2 @@
-# ansible_for_rssimap
+# rssimap_ansible
 Ansible Playbook for rssimap
